@@ -1,4 +1,4 @@
-# Data Platform: Senior Platform Engineer Test
+# Data Platform: K8s Task
 
 ## Prerequisites
 
