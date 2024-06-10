@@ -29,4 +29,4 @@ kube-system   storage-provisioner                1/1     Running   1 (46s ago)  
 
 4. The aim now is to be able to view the deployment in your browser by running a `port-forward` Kubernetes command. To begin, attempt to view the pods in your namespace. Diagnose and resolve any issues that you're able to notice until we have some running pods.
 
-5. Now that we have some running pods, we’ll need a service to be able to view the web server in your browser. Create the service with type `NodePort` and ensure we’re using the correct ports for the deployment.
+5. Now that our pods are in a healthy state, we’ll need a service to be able to view the web server in your browser. Create the service with type `NodePort` and ensure we’re using the correct ports for the deployment.
