@@ -6,7 +6,7 @@
 
 - Ensure docker is running locally.
 
-- Run `start minikube`. You should be able to run `kubectl get pods -A` and get an output similar to this:
+- Run `minikube start`. You should be able to run `kubectl get pods -A` and get an output similar to this:
 ```
 NAMESPACE     NAME                               READY   STATUS    RESTARTS      AGE
 kube-system   coredns-7db6d8ff4d-t72sm           1/1     Running   0             59s
