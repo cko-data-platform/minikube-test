@@ -1,0 +1,109 @@
+*.pyc
+*.pyo
+*.class
+*.log
+*.iml
+.coverage.*
+htmlcov
+*.orig
+
+.cache
+.filesystem
+/infra/
+localstack/infra/
+
+/node_modules/
+package-lock.json
+/nosetests.xml
+
+.env
+venv
+/.venv*
+/.coverage
+.settings/
+.project
+.classpath
+.DS_Store
+*.egg-info/
+.eggs/
+.vagrant/
+~*
+*~
+
+node_modules/
+/build/
+/dist/
+/target/
+
+.idea
+.vscode
+
+**/obj/**
+**/lib/**
+
+!bin/docker-entrypoint.sh
+
+requirements.copy.txt
+.serverless/
+
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*tfplan
+*.terraform.lock.hcl
+
+venv
+api_states
+
+/aws/lambdas/golang/handler.zip
+/tests/aws/lambdas/golang/handler.zip
+tmp/
+
+volume/
+
+# ANTLR4 ID plugin.
+gen/
+
+# hypothesis pytest plugin
+.hypothesis
+
+# RAW snapshots
+*.raw.snapshot.json
+
+### Terraform template
+# Local .terraform directories
+.terraform
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# terraform.lock.hcl files
+.terraform.lock.hcl
+
+# Exclude all .tfvars files, which are likely to contain sentitive data, such as
+# password, private keys, and other secrets. These should not be part of version
+# control as they are data points which are potentially sensitive and subject
+# to change depending on the environment.
+#
+terraform.tfvars
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do wish to add to version control using negated pattern
+#
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+*tfplan*
+
+.idea/
