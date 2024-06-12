@@ -1,22 +1,19 @@
 # Dockerfile for tflocal
-FROM python:3.9-alpine as python_base
+FROM python:3.9-alpine
 
-# Install dependencies
-RUN apk add --no-cache bash
+# Install bash, curl, and unzip
+RUN apk add --no-cache bash curl unzip
 
-# Create a virtual environment
-RUN python -m venv /opt/venv
+# Define Terraform version
+ENV TERRAFORM_VERSION=1.5.0
 
-# Install the required Python packages within the virtual environment
-RUN /opt/venv/bin/pip install --no-cache-dir terraform-local awscli-local
+# Download and install Terraform
+RUN curl -fsSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip && \
+    unzip terraform.zip && \
+    mv terraform /usr/local/bin/ && \
+    rm terraform.zip
 
-# Use hashicorp/terraform as the base image for the final stage
-FROM hashicorp/terraform:latest
-
-# Copy the virtual environment from the previous stage
-COPY --from=python_base /opt/venv /opt/venv
-
-# Set the virtual environment path
-ENV PATH="/opt/venv/bin:$PATH"
+# Install the required Python packages globally
+RUN pip install --no-cache-dir terraform-local awscli-local
 
 ENTRYPOINT ["sh"]
