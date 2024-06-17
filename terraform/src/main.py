@@ -43,7 +43,7 @@ def lambda_handler(event, context):
                 continue
         
         # Check if any objects were successfully copied
-        if not copied_objects:
+        if copied_objects is None:
             raise Exception("No objects copied from source to destination buckets.")
         
         # Construct response message

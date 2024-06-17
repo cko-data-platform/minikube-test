@@ -39,7 +39,7 @@ resource "aws_iam_policy" "lambda_execution_policy" {
           "logs:PutLogEvents"
         ],
         Resource = "arn:aws:logs:*:*:*"
-      },
+      }
       {
         Effect   = "Allow",
         Action   = "s3:GetObject",
@@ -64,9 +64,8 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 resource "aws_lambda_function" "image_processing_lambda" {
   filename         = "${path.module}/deployment.zip"
   function_name    = "image_processing_lambda"
-  role             = aws_iam_role.lambda_execution_role.arn
+  role             = aws_iam_role.lambda_exec_role.arn
   handler          = "main.lambda_handler"
-  source_code_hash = filebase64sha256("${path.module}/deployment.zip")
   runtime          = "python3.8"
   timeout          = 60
 
@@ -84,7 +83,7 @@ resource "aws_s3_bucket" "source_bucket" {
 }
 
 # S3 bucket for processed images
-resource "aws_s3_bucket" "destination_bucket" {
+resource "aws_s3_bucket" "source_bucket" {
   bucket_prefix = "destination-"
   acl           = "private"
 }
