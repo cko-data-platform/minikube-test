@@ -13,6 +13,10 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      ls:
+        # Set the container IP address in the 10.0.2.0/24 subnet
+        ipv4_address: 10.0.2.20
 
   tflocal:
     container_name: tflocal
@@ -28,5 +32,16 @@ services:
       # - AWS_DEFAULT_REGION=us-east-1
     volumes:
       - .:/workspace  # Mount the current directory to /workspace
+    dns:
+      - 10.0.2.20 # Sets the DNS server to be the LocalStack container
+    networks:
+      - ls
     working_dir: /workspace
     entrypoint: ["/bin/sh", "-c", "while true; do sleep 30; done"] # Keep the container running
+
+networks:
+  ls:
+    ipam:
+      config:
+        # Specify the subnet range for IP address allocation
+        - subnet: 10.0.2.0/24

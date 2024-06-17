@@ -93,6 +93,7 @@ terraform.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
+output.txt
 override.tf
 override.tf.json
 *_override.tf
@@ -107,3 +108,4 @@ override.tf.json
 *tfplan*
 
 .idea/
+*.zip
