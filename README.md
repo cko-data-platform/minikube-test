@@ -1,7 +1,7 @@
 # Platform Engineer Technical Test for the Data Platform
 
 ## Instructions
-This repository contains two main elements designed to assess your skills in Terraform and Kubernetes. Each section of the test is structured to evaluate specific competencies in these technologies. Below, you'll find an overview of the test, including instructions, assessment criteria, and time allocations.
+This repository contains two main elements designed to assess your skills in Terraform and Kubernetes. Each section of the test is structured to evaluate specific competencies in these technologies. Below, you'll find an overview of the test, including instructions, assessment criteria and time allocations.
 
 ## Test Overview
 This technical test is divided into two parts:
@@ -13,9 +13,9 @@ Each part is designed to be completed within 45 minutes. Including setup and any
 
 ## Assessment Objectives
 ### Kubernetes-based Assessment: 
-This section tests your proficiency with Kubernetes. You will be assessed on your knowledge of Kubernetes resources, deployment strategies, and cluster management.
+This section tests your proficiency with Kubernetes. You will be assessed on your knowledge of Kubernetes resources, local deployment and general troubleshooting.
 ### Terraform-based Assessment 
-This section evaluates your ability to use Terraform for infrastructure as code (IaC). You will be assessed on your understanding of Terraform configuration, resource management, and best practices.
+This section evaluates your ability to use Terraform for infrastructure as code (IaC). You will be assessed on your understanding of Terraform configuration, resource management and debugging an erroring Lambda function.
 
 ## Instructions for Candidates
 ### General Instructions
