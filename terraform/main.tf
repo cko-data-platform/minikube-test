@@ -19,9 +19,7 @@ EOF
 }
 
 data "aws_caller_identity" "current" {}
-output "is_localstack" {
-  value = data.aws_caller_identity.current.id == "000000000000"
-}
+
 
 # IAM policy for Lambda execution role
 resource "aws_iam_policy" "lambda_execution_policy" {
@@ -62,18 +60,24 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 
 # Lambda function
 resource "aws_lambda_function" "image_processing_lambda" {
-  filename         = "${path.module}/deployment.zip"
-  function_name    = "image_processing_lambda"
-  role             = aws_iam_role.lambda_exec_role.arn
-  handler          = "main.lambda_handler"
-  runtime          = "python3.8"
-  timeout          = 60
+  filename      = "${path.module}/deployment.zip"
+  function_name = "image_processing_lambda"
+  role          = aws_iam_role.lambda_exec_role.arn
+  handler       = "main.lambda_handler"
+  runtime       = "python3.8"
+  timeout       = 60
 
   environment {
     variables = {
       SOURCE_BUCKET = aws_s3_bucket.source_bucket.id
     }
   }
+}
+
+data "archive_file" "lambda_deployment" {
+  type        = "zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/deployment.zip"
 }
 
 # S3 bucket for source images
@@ -88,12 +92,6 @@ resource "aws_s3_bucket" "source_bucket" {
   acl           = "private"
 }
 
-data "archive_file" "lambda_deployment" {
-  type        = "zip"
-  source_dir  = "${path.module}/src"
-  output_path = "${path.module}/deployment.zip"
-}
-
 # Generate list of object keys
 locals {
   object_keys = [for i in range(5) : "test_object_${i}.txt"]
@@ -104,6 +102,5 @@ resource "aws_s3_object" "source_objects" {
   count   = length(local.object_keys)
   bucket  = aws_s3_bucket.source_bucket.bucket
   key     = local.object_keys[count.index]
-  content = "This is test object ${count.index}" # Sample content for the objects
+  content = "This is test object ${count.index}"
 }
-

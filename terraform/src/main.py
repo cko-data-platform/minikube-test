@@ -2,64 +2,89 @@ import boto3
 import json
 import os
 import traceback
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+
+def get_environment_variable(name):
+    value = os.getenv(name)
+    if not value:
+        raise ValueError(f"Environment variable {name} is not set.")
+    return value
+
+def list_objects_in_bucket(s3, bucket_name):
+    paginator = s3.get_paginator('list_objects_v2')
+    for page in paginator.paginate(Bucket=bucket_name):
+        if 'Contents' in page:
+            yield from page['Contents']
+        else:
+            print(f"No objects found in {bucket_name}.")
+
+def copy_object(s3, source_bucket, destination_bucket, source_key):
+    copy_source = {'Bucket': source_bucket, 'Key': source_key}
+    dest_key = source_key
+    try:
+        s3.copy_object(CopySource=copy_source, Bucket=destination_bucket, Key=dest_key)
+        print(f'Successfully copied {source_bucket}/{source_key} to {destination_bucket}/{dest_key}')
+        return dest_key
+    except Exception as e:
+        print(f'Error copying object {source_key}: {e}')
+        traceback.print_exc()
+        return None
+
+def count_objects_in_bucket(s3, bucket_name):
+    count = 0
+    for _ in list_objects_in_bucket(s3, bucket_name):
+        count += 1
+    return count
 
 def lambda_handler(event, context):
-    # Get the S3 client
-    s3 = boto3.client('s3')
-
-    # Get environment variables
-    source_bucket = os.getenv('SOURCE_BUCKET')
-    destination_bucket = os.getenv('DESTINATION_BUCKET')
-
-    # List objects in the source bucket
     try:
-        response = s3.list_objects_v2(Bucket=source_bucket)
-        print(response)
-        
-        if 'Contents' not in response:
-            print('No objects found in the source bucket.')
-            return {
-                'statusCode': 200,
-                'body': json.dumps('No objects to process')
-            }
-        
+        s3 = boto3.client('s3')
+        source_bucket = get_environment_variable('SOURCE_BUCKET')
+        destination_bucket = get_environment_variable('DESTINATION_BUCKET')
+
         copied_objects = []
 
-        for obj in response['Contents']:
-            source_key = obj['Key']
-            
-            # Copy the object to the destination bucket
-            copy_source = {'Bucket': source_bucket, 'Key': source_key}
-            dest_key = source_key.replace('source/', 'destination/')
-            
-            try:
-                s3.copy_object(CopySource=copy_source, Bucket=destination_bucket, Key=dest_key)
-                print(f'Successfully copied {source_key} to {dest_key}')
+        # Copy objects from source to destination
+        for obj in list_objects_in_bucket(s3, source_bucket):
+            dest_key = copy_object(s3, source_bucket, destination_bucket, obj['Key'])
+            if dest_key:
                 copied_objects.append(dest_key)
-            except Exception as e:
-                print(f'Error copying object: {e}')
-                traceback.print_exc()
-                # Log the specific error for debugging purposes
-                continue
-        
-        # Check if any objects were successfully copied
-        if copied_objects is None:
-            raise Exception("No objects copied from source to destination buckets.")
-        
-        # Construct response message
+
+        if not copied_objects:
+            message = "No objects copied from source to destination buckets."
+            print(message)
+            raise Exception(message)
+
+        # Count objects in both source and destination buckets
+        source_count = count_objects_in_bucket(s3, source_bucket)
+        destination_count = count_objects_in_bucket(s3, destination_bucket)
+
+        if source_count != destination_count:
+            message = (f"Object count mismatch: Source bucket ({source_bucket}) has {source_count} objects, "
+                       f"but destination bucket ({destination_bucket}) has {destination_count} objects.")
+            print(message)
+            raise Exception(message)
+
         message = f"Challenge complete - S3 objects copied successfully: {', '.join(copied_objects)}"
         print(message)
-        
         return {
             'statusCode': 200,
             'body': json.dumps(message)
         }
-        
+    except (ValueError, NoCredentialsError, PartialCredentialsError) as e:
+        print(f'Configuration error: {e}')
+        traceback.print_exc()
+        return {
+            'statusCode': 500,
+            'body': json.dumps(f'Configuration error: {e}')
+        }
     except Exception as e:
         print(f'Error: {e}')
         traceback.print_exc()
-        raise e
+        return {
+            'statusCode': 500,
+            'body': json.dumps(f'Error: {e}')
+        }
 
-# If running this script locally, invoke lambda_handler directly without an event
 if __name__ == '__main__':
     lambda_handler(None, None)

@@ -6,7 +6,7 @@
 
 - Run `docker-compose up --build`. All being well, you should get an output similar to this:
 ```
-[+] Running 2/0
+[+] Running 2/2
  ✔ Container localstack-main   Created
  ✔ Container tflocal           Created
  ...
@@ -29,6 +29,5 @@ awslocal lambda invoke --function-name image_processing_lambda output.txt
 Check the content of the output.txt file to debug the lambda and fix any issues accordingly.
 If you wish to add steps to the code to allow for logging/troubleshooting between invocations, you can view subsequent Cloudwatch logs with the following:
 ```
-awslocal logs filter-log-events --log-group-name /aws/lambda/image_processing_lambda --query 'events[*].[timestamp,mess
-age]' --output json --start-time $(date -u +%s) --region us-east-1
+awslocal logs filter-log-events --log-group-name /aws/lambda/image_processing_lambda --query 'events[*].[timestamp,message]' --output json --start-time $(date -u +%s) --region us-east-1
 ```
